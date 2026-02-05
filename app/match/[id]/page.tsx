@@ -2,6 +2,7 @@ import { matchService } from "@/services/match-service";
 import { MatchHeader } from "@/components/match/match-header";
 import { MomentumChart } from "@/components/match/momentum-chart";
 import { StatsRadar } from "@/components/match/stats-radar";
+import { PredictionSlip } from "@/components/match/prediction-slip";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -24,9 +25,21 @@ export default async function MatchPage({ params }: { params: { id: string } }) 
 
                 <MatchHeader match={match} />
 
-                <div className="p-4 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <MomentumChart />
-                    <StatsRadar />
+                <div className="p-4 md:p-8 space-y-8">
+                    {/* Charts */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <MomentumChart />
+                        <StatsRadar />
+                    </div>
+
+                    {/* Prediction Engine */}
+                    <div>
+                        <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                            <span className="w-1 h-6 bg-blue-500 rounded-full" />
+                            AI Insights
+                        </h3>
+                        <PredictionSlip match={match} />
+                    </div>
                 </div>
             </div>
         </main>
