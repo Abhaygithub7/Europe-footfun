@@ -3,6 +3,7 @@ import { Hero } from "@/components/dashboard/hero";
 import { DateStrip } from "@/components/dashboard/date-strip";
 import { LeagueGroup } from "@/components/dashboard/league-group";
 import { Match } from "@/types/match";
+import { ProToggle } from "@/components/dashboard/pro-toggle";
 
 export const dynamic = 'force-dynamic'; // Force dynamic for search params
 
@@ -32,11 +33,17 @@ export default async function Home({ searchParams }: HomeProps) {
     <main className="min-h-screen bg-black text-white font-sans">
       <div className="max-w-7xl mx-auto p-4 md:p-8">
         <header className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
-            MATCH PREDICTOR <span className="text-white not-italic font-mono text-sm align-super">PRO</span>
-          </h1>
-          <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700">
-            <span className="font-bold">JS</span>
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
+              MATCH PREDICTOR
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <ProToggle />
+            <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700">
+              <span className="font-bold">JS</span>
+            </div>
           </div>
         </header>
 
