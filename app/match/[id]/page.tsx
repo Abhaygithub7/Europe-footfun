@@ -1,5 +1,7 @@
 import { matchService } from "@/services/match-service";
 import { MatchHeader } from "@/components/match/match-header";
+import { MomentumChart } from "@/components/match/momentum-chart";
+import { StatsRadar } from "@/components/match/stats-radar";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -22,10 +24,9 @@ export default async function MatchPage({ params }: { params: { id: string } }) 
 
                 <MatchHeader match={match} />
 
-                <div className="p-4 md:p-8 space-y-12">
-                    <div className="text-center text-slate-500 py-12">
-                        Visualization content coming soon...
-                    </div>
+                <div className="p-4 md:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <MomentumChart />
+                    <StatsRadar />
                 </div>
             </div>
         </main>
