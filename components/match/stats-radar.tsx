@@ -63,6 +63,18 @@ export function StatsRadar({ match }: { match?: Match }) { // Optional match for
                     />
                 </RadarChart>
             </ResponsiveContainer>
+
+            {/* Legend */}
+            <div className="flex justify-center gap-6 mt-2 pb-2">
+                <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-blue-500/50 border border-blue-500" />
+                    <span className="text-xs text-slate-400 font-bold">{match.homeTeam.code}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500/50 border border-red-500" />
+                    <span className="text-xs text-slate-400 font-bold">{match.awayTeam.code}</span>
+                </div>
+            </div>
         </div>
     );
 }

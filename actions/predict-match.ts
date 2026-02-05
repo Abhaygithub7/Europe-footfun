@@ -8,6 +8,8 @@ export interface PredictionResult {
     confidence: number;
     analysis: string;
     key_risk: string;
+    key_battle: string;
+    h2h_score: number;
 }
 
 export async function predictMatch(match: Match): Promise<PredictionResult | null> {
@@ -31,6 +33,8 @@ export async function predictMatch(match: Match): Promise<PredictionResult | nul
       - confidence: (number) 0-100 score
       - analysis: (string) A concise 2-sentence tactical analysis. avoid generic phrases. mention specific team styles.
       - key_risk: (string) One short key risk factor (max 5 words).
+      - key_battle: (string) A key player matchup (e.g. "Salah vs Shaw").
+      - h2h_score: (number) 0-100 score favoring home team based on history (50 is even).
       
       Response:`;
 

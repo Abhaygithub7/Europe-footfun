@@ -30,18 +30,22 @@ export function AdvancedStatsModal({ match, prediction, onClose }: { match: Matc
                     {/* H2H Section */}
                     <div>
                         <h3 className="text-sm font-bold text-slate-400 uppercase mb-3 flex items-center gap-2">
-                            <Users className="w-4 h-4" /> Head-to-Head (Last 5)
+                            <Users className="w-4 h-4" /> Head-to-Head Power
                         </h3>
-                        <div className="flex gap-2">
-                            {[1, 2, 3, 4, 5].map(i => {
-                                const style = i % 2 === 0 ? "bg-red-500/20 text-red-400 border-red-500/50" : "bg-green-500/20 text-green-400 border-green-500/50";
-                                const text = i % 2 === 0 ? "L" : "W";
-                                return (
-                                    <div key={i} className={cn("flex-1 h-8 rounded flex items-center justify-center font-mono font-bold border", style)}>
-                                        {text}
-                                    </div>
-                                )
-                            })}
+                        {/* Dynamic H2H Bar */}
+                        <div className="h-4 bg-slate-800 rounded-full overflow-hidden flex relative">
+                            <div
+                                style={{ width: `${prediction ? prediction.h2h_score : 50}%` }}
+                                className="h-full bg-blue-500 transition-all duration-1000 ease-out"
+                            />
+                            <div className="absolute inset-0 flex justify-between px-2 items-center text-[10px] font-bold text-white/80">
+                                <span>{match.homeTeam.code}</span>
+                                <span>{match.awayTeam.code}</span>
+                            </div>
+                        </div>
+                        <div className="flex justify-between text-xs text-slate-500 mt-1 font-mono">
+                            <span>Home Adv.</span>
+                            <span>Away Adv.</span>
                         </div>
                     </div>
 
@@ -50,18 +54,14 @@ export function AdvancedStatsModal({ match, prediction, onClose }: { match: Matc
                         <h3 className="text-sm font-bold text-slate-400 uppercase mb-4 flex items-center gap-2">
                             <Target className="w-4 h-4" /> Key Battle
                         </h3>
-                        <div className="flex justify-between items-center text-sm">
-                            <div className="text-center">
-                                <div className="w-12 h-12 bg-slate-700 rounded-full mb-2 mx-auto" />
-                                <span className="font-bold text-white block">Key Player A</span>
-                                <span className="text-slate-400 text-xs">8 Goals</span>
-                            </div>
-                            <div className="text-xs font-mono text-slate-500">VS</div>
-                            <div className="text-center">
-                                <div className="w-12 h-12 bg-slate-700 rounded-full mb-2 mx-auto" />
-                                <span className="font-bold text-white block">Key Player B</span>
-                                <span className="text-slate-400 text-xs">5 Assists</span>
-                            </div>
+                        <div className="flex justify-center items-center text-sm gap-4">
+                            {prediction ? (
+                                <div className="text-lg font-black text-white text-center">
+                                    {prediction.key_battle}
+                                </div>
+                            ) : (
+                                <div className="text-slate-500 italic">Analyzing matchups...</div>
+                            )}
                         </div>
                     </div>
 

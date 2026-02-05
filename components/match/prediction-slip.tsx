@@ -35,7 +35,9 @@ export function PredictionSlip({ match }: { match: Match }) {
                         winner: favorite.name,
                         confidence,
                         analysis: `${favorite.name}'s high press is likely to overwhelm ${match.probs!.home > match.probs!.away ? match.awayTeam.name : match.homeTeam.name}'s defensive line. Recent form suggests a high-scoring second half.`,
-                        key_risk: "Star striker injury doubt"
+                        key_risk: "Star striker injury doubt",
+                        key_battle: `${favorite.name} Attack vs Defense`,
+                        h2h_score: 55
                     });
                 }
             } catch (error) {
