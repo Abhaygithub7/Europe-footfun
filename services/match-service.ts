@@ -14,9 +14,21 @@ export const matchService = {
 
         try {
             // Fetch matches from top leagues (PL, PD, SA, BL1, FL1, CL, EC, WC)
-            // Getting matches for the specific date or next 7 days if no date
-            const dateFrom = date || new Date().toISOString().split('T')[0];
-            const dateTo = date || new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0];
+            // If date is provided, fetch a wider window (-1/+1 day) to account for timezones
+            // filtering will still be strict on the display side
+
+            let dateFrom = date || new Date().toISOString().split('T')[0];
+            let dateTo = date || new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0];
+
+            if (date) {
+                const d = new Date(date);
+                d.setDate(d.getDate() - 1);
+                dateFrom = d.toISOString().split('T')[0];
+
+                const d2 = new Date(date);
+                d2.setDate(d2.getDate() + 1);
+                dateTo = d2.toISOString().split('T')[0];
+            }
 
             const response = await axios.get(`${BASE_URL}/matches`, {
                 headers: {
