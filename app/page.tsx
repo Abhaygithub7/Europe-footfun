@@ -4,6 +4,7 @@ import { DateStrip } from "@/components/dashboard/date-strip";
 import { LeagueGroup } from "@/components/dashboard/league-group";
 import { Match } from "@/types/match";
 import { ProToggle } from "@/components/dashboard/pro-toggle";
+import { UserNav } from "@/components/layout/user-nav";
 
 export const dynamic = 'force-dynamic'; // Force dynamic for search params
 
@@ -42,9 +43,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
           <div className="flex items-center gap-4">
             <ProToggle />
-            <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700">
-              <span className="font-bold">JS</span>
-            </div>
+            <UserNav />
           </div>
         </header>
 
