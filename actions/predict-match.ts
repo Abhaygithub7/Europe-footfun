@@ -18,6 +18,7 @@ export async function predictMatch(match: Match): Promise<PredictionResult | nul
     }
 
     try {
+        console.log(`[Gemini] Predicting match: ${match.homeTeam.name} vs ${match.awayTeam.name}`);
         const prompt = `
       Analyze this football match and provide a betting-style prediction.
       
@@ -28,7 +29,7 @@ export async function predictMatch(match: Match): Promise<PredictionResult | nul
       Return a JSON object with:
       - winner: (string) Predicted winner name
       - confidence: (number) 0-100 score
-      - analysis: (string) A concise 2-sentence tactical analysis.
+      - analysis: (string) A concise 2-sentence tactical analysis. avoid generic phrases. mention specific team styles.
       - key_risk: (string) One short key risk factor (max 5 words).
       
       Response:`;
@@ -36,6 +37,8 @@ export async function predictMatch(match: Match): Promise<PredictionResult | nul
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = response.text();
+
+        console.log("[Gemini] Response:", text.substring(0, 50) + "...");
 
         // Clean up markdown code blocks if present
         const cleanedText = text.replace(/```json/g, "").replace(/```/g, "").trim();

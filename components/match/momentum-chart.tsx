@@ -1,21 +1,39 @@
 "use client";
 
+import { Match } from "@/types/match";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
-const data = [
-    { minute: 0, value: 0 },
-    { minute: 10, value: 15 },
-    { minute: 20, value: -10 },
-    { minute: 30, value: 25 },
-    { minute: 40, value: 40 },
-    { minute: 50, value: 10 },
-    { minute: 60, value: -20 },
-    { minute: 70, value: -35 },
-    { minute: 80, value: 10 },
-    { minute: 90, value: 50 },
-];
+function pseudoRandom(seed: number) {
+    const x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+}
 
-export function MomentumChart() {
+function generateMomentum(homeId: number, awayId: number) {
+    const data = [];
+    let currentValue = 0;
+
+    // Generate 10 data points (every 10 mins)
+    for (let i = 0; i <= 90; i += 10) {
+        // Seed based on team IDs and minute to be consistent but unique per match
+        const seed = homeId + awayId + i;
+        const randomShift = (pseudoRandom(seed) * 40) - 20; // Shift between -20 and +20
+
+        // Add momentum based on randomness but slightly weighted
+        currentValue += randomShift;
+
+        // Clamp between -60 and 60
+        currentValue = Math.max(-55, Math.min(55, currentValue));
+
+        data.push({ minute: i, value: Math.floor(currentValue) });
+    }
+    return data;
+}
+
+export function MomentumChart({ match }: { match?: Match }) {
+    if (!match) return null;
+
+    const data = generateMomentum(match.homeTeam.id, match.awayTeam.id);
+
     return (
         <div className="w-full h-[300px] bg-slate-900 rounded-xl p-4 border border-slate-800">
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
@@ -40,7 +58,7 @@ export function MomentumChart() {
                         contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#fff' }}
                         formatter={(value: number | undefined) => {
                             const val = value ?? 0;
-                            return [Math.abs(val), val > 0 ? 'Home Pressure' : 'Away Pressure'];
+                            return [Math.abs(val), val > 0 ? `${match.homeTeam.code} Pressure` : `${match.awayTeam.code} Pressure`];
                         }}
                     />
                     <ReferenceLine y={0} stroke="#334155" strokeDasharray="3 3" />

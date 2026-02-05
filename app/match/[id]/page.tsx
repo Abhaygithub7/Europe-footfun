@@ -29,8 +29,8 @@ export default async function MatchPage({ params }: { params: Promise<{ id: stri
                 <div className="p-4 md:p-8 space-y-8">
                     {/* Charts */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <MomentumChart />
-                        <StatsRadar />
+                        <MomentumChart match={match} />
+                        <StatsRadar match={match} />
                     </div>
 
                     {/* Prediction Engine */}

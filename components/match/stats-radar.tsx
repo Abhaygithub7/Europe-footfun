@@ -1,16 +1,40 @@
 "use client";
 
+import { Match } from "@/types/match";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
 
-const data = [
-    { subject: 'Attack', A: 120, B: 110, fullMark: 150 },
-    { subject: 'Defense', A: 98, B: 130, fullMark: 150 },
-    { subject: 'Control', A: 86, B: 130, fullMark: 150 },
-    { subject: 'Form', A: 99, B: 100, fullMark: 150 },
-    { subject: 'H2H', A: 85, B: 90, fullMark: 150 },
-];
+// Simple seeded random to keep stats consistent for the same team across reloads
+function pseudoRandom(seed: number) {
+    const x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+}
 
-export function StatsRadar() {
+function generateTeamStats(id: number) {
+    const r = (offset: number) => 50 + Math.floor(pseudoRandom(id + offset) * 100); // 50-150 range
+
+    return {
+        attack: r(1),
+        defense: r(2),
+        control: r(3),
+        form: r(4),
+        h2h: r(5)
+    };
+}
+
+export function StatsRadar({ match }: { match?: Match }) { // Optional match for safety
+    if (!match) return null;
+
+    const homeStats = generateTeamStats(match.homeTeam.id);
+    const awayStats = generateTeamStats(match.awayTeam.id);
+
+    const data = [
+        { subject: 'Attack', A: homeStats.attack, B: awayStats.attack, fullMark: 150 },
+        { subject: 'Defense', A: homeStats.defense, B: awayStats.defense, fullMark: 150 },
+        { subject: 'Control', A: homeStats.control, B: awayStats.control, fullMark: 150 },
+        { subject: 'Form', A: homeStats.form, B: awayStats.form, fullMark: 150 },
+        { subject: 'H2H', A: homeStats.h2h, B: awayStats.h2h, fullMark: 150 },
+    ];
+
     return (
         <div className="w-full h-[300px] bg-slate-900 rounded-xl p-4 border border-slate-800">
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
@@ -22,7 +46,7 @@ export function StatsRadar() {
                     <PolarGrid stroke="#334155" />
                     <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 12 }} />
                     <Radar
-                        name="Home"
+                        name={match.homeTeam.code}
                         dataKey="A"
                         stroke="#3b82f6"
                         strokeWidth={2}
@@ -30,7 +54,7 @@ export function StatsRadar() {
                         fillOpacity={0.4}
                     />
                     <Radar
-                        name="Away"
+                        name={match.awayTeam.code}
                         dataKey="B"
                         stroke="#ef4444"
                         strokeWidth={2}

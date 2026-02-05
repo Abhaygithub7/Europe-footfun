@@ -13,7 +13,8 @@ interface HomeProps {
 
 export default async function Home({ searchParams }: HomeProps) {
   const resolvedParams = await searchParams;
-  const date = typeof resolvedParams.date === 'string' ? resolvedParams.date : undefined;
+  const today = new Date().toISOString().split('T')[0];
+  const date = typeof resolvedParams.date === 'string' ? resolvedParams.date : today;
 
   const matches = await matchService.getUpcomingMatches(date);
 
