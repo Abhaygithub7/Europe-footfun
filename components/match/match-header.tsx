@@ -1,5 +1,6 @@
 import { Match } from "@/types/match";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 export function MatchHeader({ match }: { match: Match }) {
     return (
@@ -24,7 +25,9 @@ export function MatchHeader({ match }: { match: Match }) {
                         "px-4 py-1 mt-4 text-xs font-mono rounded-full border tracking-widest uppercase",
                         match.status === 'LIVE' ? "bg-red-500/20 text-red-400 border-red-500/50 animate-pulse" : "bg-green-500/20 text-green-400 border-green-500/50"
                     )}>
-                        {match.status === 'SCHEDULED' ? new Date(match.utcDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : match.status}
+                        <span suppressHydrationWarning>
+                            {match.status === 'SCHEDULED' ? format(new Date(match.utcDate), "MMM d, HH:mm") : match.status}
+                        </span>
                     </div>
                 </div>
 
