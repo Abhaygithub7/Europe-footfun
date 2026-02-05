@@ -6,10 +6,11 @@ import { PredictionSlip } from "@/components/match/prediction-slip";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export default async function MatchPage({ params }: { params: { id: string } }) {
+export default async function MatchPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     // In a real app, we'd fetch by ID. Here we'll just grab the list and find it or default to first mock
     const matches = await matchService.getUpcomingMatches();
-    const match = matches.find(m => m.id.toString() === params.id) || matches[0];
+    const match = matches.find(m => m.id.toString() === id) || matches[0];
 
     return (
         <main className="min-h-screen bg-black text-white font-sans pb-20">
