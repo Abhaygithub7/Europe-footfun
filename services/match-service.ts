@@ -6,24 +6,24 @@ const API_KEY = process.env.NEXT_PUBLIC_FOOTBALL_DATA_API_KEY;
 const BASE_URL = "https://api.football-data.org/v4";
 
 export const matchService = {
-    getUpcomingMatches: async (): Promise<Match[]> => {
+    getUpcomingMatches: async (date?: string): Promise<Match[]> => {
         if (!API_KEY) {
             console.warn("No API key found, using mock data");
             return Promise.resolve(MOCK_MATCHES);
         }
 
         try {
-            // Fetch matches from top leagues (PL, PD, SA, BL1, FL1, CL)
-            // Getting matches for the next 7 days
-            const dateFrom = new Date().toISOString().split('T')[0];
-            const dateTo = new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0];
+            // Fetch matches from top leagues (PL, PD, SA, BL1, FL1, CL, EC, WC)
+            // Getting matches for the specific date or next 7 days if no date
+            const dateFrom = date || new Date().toISOString().split('T')[0];
+            const dateTo = date || new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0];
 
             const response = await axios.get(`${BASE_URL}/matches`, {
                 headers: {
                     'X-Auth-Token': API_KEY
                 },
                 params: {
-                    competitions: 'PL,PD,SA,BL1,FL1,CL',
+                    competitions: 'PL,PD,SA,BL1,FL1,CL,EC,WC',
                     dateFrom,
                     dateTo,
                 }
@@ -62,11 +62,11 @@ export const matchService = {
                 }
             }));
 
-            return matches.length > 0 ? matches : MOCK_MATCHES;
+            return matches; // Return empty array if no matches, don't fallback to MOCK unless error to allow "No matches" state
 
         } catch (error) {
             console.error("Error fetching matches:", error);
-            return Promise.resolve(MOCK_MATCHES);
+            return Promise.resolve(MOCK_MATCHES); // Fallback on error
         }
     }
 };
