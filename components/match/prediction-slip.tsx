@@ -2,11 +2,12 @@
 
 import { Match } from "@/types/match";
 import { cn } from "@/lib/utils";
-import { Sparkles, TrendingUp, AlertTriangle, Bookmark, CheckCircle } from "lucide-react";
-import { useState } from "react";
+import { Sparkles, TrendingUp, AlertTriangle, Bookmark, CheckCircle, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
 import { AdvancedStatsModal } from "./advanced-stats-modal";
 import { useProMode } from "@/context/pro-mode-context";
 import { useAuth } from "@/context/auth-context";
+import { predictMatch, PredictionResult } from "@/actions/predict-match";
 
 export function PredictionSlip({ match }: { match: Match }) {
     const { isProMode } = useProMode();
@@ -14,16 +15,55 @@ export function PredictionSlip({ match }: { match: Match }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
 
-    // Mock AI reasoning based on probabilities
-    const favorite = match.probs && match.probs.home > match.probs.away ? match.homeTeam : match.awayTeam;
-    const confidence = match.probs ? Math.max(match.probs.home, match.probs.away) : 0;
-    const isHighConfidence = confidence > 50;
+    // AI State
+    const [aiPrediction, setAiPrediction] = useState<PredictionResult | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchPrediction = async () => {
+            setIsLoading(true);
+            try {
+                // Try to get real prediction
+                const result = await predictMatch(match);
+                if (result) {
+                    setAiPrediction(result);
+                } else {
+                    // Fallback to mock logic if no API key or error
+                    const favorite = match.probs && match.probs.home > match.probs.away ? match.homeTeam : match.awayTeam;
+                    const confidence = match.probs ? Math.max(match.probs.home, match.probs.away) : 0;
+                    setAiPrediction({
+                        winner: favorite.name,
+                        confidence,
+                        analysis: `${favorite.name}'s high press is likely to overwhelm ${match.probs!.home > match.probs!.away ? match.awayTeam.name : match.homeTeam.name}'s defensive line. Recent form suggests a high-scoring second half.`,
+                        key_risk: "Star striker injury doubt"
+                    });
+                }
+            } catch (error) {
+                console.error("Prediction error:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        fetchPrediction();
+    }, [match]);
 
     const handleSave = () => {
         setIsSaved(true);
         // In real app, call API here
         setTimeout(() => setIsSaved(false), 3000);
     };
+
+    if (isLoading) {
+        return (
+            <div className="bg-slate-900 rounded-xl border border-slate-800 p-6 flex flex-col items-center justify-center min-h-[300px] animate-pulse">
+                <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-4" />
+                <p className="text-slate-500 font-mono text-sm uppercase">Analyzing Match Data...</p>
+            </div>
+        )
+    }
+
+    const isHighConfidence = (aiPrediction?.confidence || 0) > 50;
 
     return (
         <>
@@ -60,9 +100,9 @@ export function PredictionSlip({ match }: { match: Match }) {
                         <div className="flex flex-col gap-2">
                             <span className="text-slate-400 text-xs font-mono uppercase">Projected Winner</span>
                             <div className="text-3xl font-black text-white flex items-center gap-3">
-                                {favorite.name}
+                                {aiPrediction?.winner}
                                 <div className={cn("px-2 py-0.5 rounded text-xs font-bold border", isHighConfidence ? "bg-green-500/20 text-green-400 border-green-500/50" : "bg-yellow-500/20 text-yellow-400 border-yellow-500/50")}>
-                                    {confidence}% CONFIDENCE
+                                    {aiPrediction?.confidence}% CONFIDENCE
                                 </div>
                             </div>
                         </div>
@@ -74,12 +114,11 @@ export function PredictionSlip({ match }: { match: Match }) {
                                 <div className="space-y-1">
                                     <p className="text-sm text-slate-200 leading-relaxed">
                                         <span className="font-semibold text-blue-300">Tactical Edge: </span>
-                                        {favorite.name}'s high press is likely to overwhelm {match.probs!.home > match.probs!.away ? match.awayTeam.name : match.homeTeam.name}'s defensive line.
-                                        Recent form suggests a high-scoring second half.
+                                        {aiPrediction?.analysis}
                                     </p>
                                     <div className="flex items-center gap-2 text-xs text-slate-500 mt-2">
                                         <AlertTriangle className="w-3 h-3 text-yellow-500" />
-                                        <span>Key Risk: Star striker injury doubt</span>
+                                        <span>Key Risk: {aiPrediction?.key_risk}</span>
                                     </div>
                                 </div>
                             </div>
