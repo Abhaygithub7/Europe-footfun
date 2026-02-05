@@ -4,7 +4,9 @@ import { Match } from "@/types/match";
 import { cn } from "@/lib/utils";
 import { X, Trophy, TrendingUp, Users, Target } from "lucide-react";
 
-export function AdvancedStatsModal({ match, onClose }: { match: Match, onClose: () => void }) {
+import { PredictionResult } from "@/actions/predict-match";
+
+export function AdvancedStatsModal({ match, prediction, onClose }: { match: Match, prediction: PredictionResult | null, onClose: () => void }) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-slate-900 border border-slate-700 w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl relative animate-in zoom-in-95 duration-200">
@@ -68,10 +70,13 @@ export function AdvancedStatsModal({ match, onClose }: { match: Match, onClose: 
                         <h3 className="text-sm font-bold text-slate-400 uppercase flex items-center gap-2">
                             <TrendingUp className="w-4 h-4" /> Match Simulation logic
                         </h3>
-                        <p className="text-slate-300 text-sm leading-relaxed border-l-2 border-blue-500 pl-3">
-                            Our model ran 10,000 simulations. {match.homeTeam.name} wins in 42% of scenarios, predominantly when scoring first.
-                            Expect a high defensive line from {match.awayTeam.name}, which might expose them to counter-attacks in the 60-75th minute window.
-                        </p>
+                        {prediction ? (
+                            <p className="text-slate-300 text-sm leading-relaxed border-l-2 border-blue-500 pl-3">
+                                {prediction.analysis}
+                            </p>
+                        ) : (
+                            <p className="text-slate-500 text-sm italic">Loading analysis...</p>
+                        )}
                     </div>
 
                 </div>

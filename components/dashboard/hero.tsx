@@ -1,7 +1,32 @@
+"use client";
+
 import { Match } from "@/types/match";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+
 
 export function Hero({ featuredMatch }: { featuredMatch: Match }) {
+    const [timeLeft, setTimeLeft] = useState("");
+
+    useEffect(() => {
+        const calculateTimeLeft = () => {
+            const difference = +new Date(featuredMatch.utcDate) - +new Date();
+
+            if (difference > 0) {
+                const hours = Math.floor((difference / (1000 * 60 * 60))); // Allow hours > 24 for future matches
+                const minutes = Math.floor((difference / 1000 / 60) % 60);
+                const seconds = Math.floor((difference / 1000) % 60);
+                setTimeLeft(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+            } else {
+                setTimeLeft("LIVE");
+            }
+        };
+
+        calculateTimeLeft();
+        const timer = setInterval(calculateTimeLeft, 1000);
+        return () => clearInterval(timer);
+    }, [featuredMatch.utcDate]);
+
     if (!featuredMatch) return null;
 
     return (
@@ -36,8 +61,10 @@ export function Hero({ featuredMatch }: { featuredMatch: Match }) {
 
                 {/* Countdown / Status */}
                 <div className="mt-12 flex flex-col items-center gap-2">
-                    <span className="text-slate-400 font-mono text-lg">KICKOFF IN</span>
-                    <span className="text-4xl font-bold font-mono">02:14:35</span>
+                    <span className="text-slate-400 font-mono text-lg">{timeLeft === "LIVE" ? "CURRENTLY" : "KICKOFF IN"}</span>
+                    <span className={cn("text-4xl font-bold font-mono", timeLeft === "LIVE" ? "text-red-500 animate-pulse" : "text-white")}>
+                        {timeLeft}
+                    </span>
                 </div>
             </div>
         </div>

@@ -62,6 +62,11 @@ export const matchService = {
                 }
             }));
 
+            // Strict filtering primarily for the date view to avoid timezone bleeds
+            if (date) {
+                return matches.filter((m: any) => m.utcDate.startsWith(date));
+            }
+
             return matches; // Return empty array if no matches, don't fallback to MOCK unless error to allow "No matches" state
 
         } catch (error) {

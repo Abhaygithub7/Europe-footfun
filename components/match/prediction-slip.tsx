@@ -141,7 +141,7 @@ export function PredictionSlip({ match }: { match: Match }) {
                 </div>
             </div>
 
-            {isModalOpen && <AdvancedStatsModal match={match} onClose={() => setIsModalOpen(false)} />}
+            {isModalOpen && <AdvancedStatsModal match={match} prediction={aiPrediction} onClose={() => setIsModalOpen(false)} />}
         </>
     );
 }
