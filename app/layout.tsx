@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 import { ProModeProvider } from "@/context/pro-mode-context";
+import { AuthProvider } from "@/context/auth-context";
 
 // ... existing code ...
 
@@ -31,9 +32,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ProModeProvider>
-          {children}
-        </ProModeProvider>
+        <AuthProvider>
+          <ProModeProvider>
+            {children}
+          </ProModeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

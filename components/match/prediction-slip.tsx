@@ -2,19 +2,28 @@
 
 import { Match } from "@/types/match";
 import { cn } from "@/lib/utils";
-import { Sparkles, TrendingUp, AlertTriangle } from "lucide-react";
+import { Sparkles, TrendingUp, AlertTriangle, Bookmark, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { AdvancedStatsModal } from "./advanced-stats-modal";
 import { useProMode } from "@/context/pro-mode-context";
+import { useAuth } from "@/context/auth-context";
 
 export function PredictionSlip({ match }: { match: Match }) {
     const { isProMode } = useProMode();
+    const { isAuthenticated } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
 
     // Mock AI reasoning based on probabilities
     const favorite = match.probs && match.probs.home > match.probs.away ? match.homeTeam : match.awayTeam;
     const confidence = match.probs ? Math.max(match.probs.home, match.probs.away) : 0;
     const isHighConfidence = confidence > 50;
+
+    const handleSave = () => {
+        setIsSaved(true);
+        // In real app, call API here
+        setTimeout(() => setIsSaved(false), 3000);
+    };
 
     return (
         <>
@@ -23,9 +32,27 @@ export function PredictionSlip({ match }: { match: Match }) {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-500/20 transition-all duration-700" />
 
                 <div className="relative z-10">
-                    <div className="flex items-center gap-2 mb-6 text-blue-400">
-                        <Sparkles className="w-5 h-5 animate-pulse" />
-                        <span className="text-sm font-bold uppercase tracking-widest">AI Prediction Engine</span>
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-2 text-blue-400">
+                            <Sparkles className="w-5 h-5 animate-pulse" />
+                            <span className="text-sm font-bold uppercase tracking-widest">AI Prediction Engine</span>
+                        </div>
+
+                        {isAuthenticated ? (
+                            <button
+                                onClick={handleSave}
+                                disabled={isSaved}
+                                className={cn(
+                                    "text-xs font-bold uppercase tracking-wider flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all",
+                                    isSaved ? "bg-green-500/20 text-green-400 border-green-500/50" : "bg-slate-800 text-slate-400 border-slate-700 hover:text-white"
+                                )}
+                            >
+                                {isSaved ? <CheckCircle className="w-3 h-3" /> : <Bookmark className="w-3 h-3" />}
+                                {isSaved ? "Saved" : "Save Prediction"}
+                            </button>
+                        ) : (
+                            <span className="text-xs text-slate-500 font-mono">LOGIN TO SAVE</span>
+                        )}
                     </div>
 
                     <div className="flex flex-col md:flex-row gap-8 justify-between">
