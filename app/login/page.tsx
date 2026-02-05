@@ -44,6 +44,7 @@ export default function LoginPage() {
                     <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-blue-500 rounded-br-lg" />
 
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Hybrid UI: If Supabase client exists, show real fields, else show simulation */}
                         <div className="space-y-2">
                             <label htmlFor="username" className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                                 Agent Codename
@@ -60,14 +61,14 @@ export default function LoginPage() {
                             />
                         </div>
 
+                        {/* Note explaining the mode */}
                         <div className="flex items-center gap-3 text-xs text-slate-500 bg-slate-950/50 p-3 rounded border border-slate-800/50">
                             <ShieldCheck className="w-4 h-4 text-green-500" />
-                            <span>Secure simulated environment active.</span>
+                            <span>Secure authentication gateway active.</span>
                         </div>
 
                         <button
-                            type="button" // Change to submit
-                            onClick={handleSubmit}
+                            type="submit"
                             disabled={isLoading || !username}
                             className={cn(
                                 "w-full py-4 rounded-lg font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all",

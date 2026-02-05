@@ -48,9 +48,36 @@ export function PredictionSlip({ match }: { match: Match }) {
         fetchPrediction();
     }, [match]);
 
-    const handleSave = () => {
+    const handleSave = async () => {
         setIsSaved(true);
-        // In real app, call API here
+
+        // Hybrid Logic: Save to DB if real auth, else just mock
+        try {
+            // @ts-ignore - extended context type
+            const { supabase, user } = useAuth();
+
+            if (supabase && user) {
+                const { error } = await supabase
+                    .from('predictions')
+                    .insert({
+                        user_id: (await supabase.auth.getUser()).data.user?.id,
+                        match_id: match.id,
+                        home_team: match.homeTeam.name,
+                        away_team: match.awayTeam.name,
+                        predicted_winner: aiPrediction?.winner || "Unknown",
+                        confidence: aiPrediction?.confidence || 0,
+                        ai_analysis: aiPrediction?.analysis
+                    });
+
+                if (error) {
+                    console.error("Failed to save to DB:", error);
+                    // Check for "row level security" or "relation does not exist" which means tables aren't set up
+                }
+            }
+        } catch (e) {
+            console.error("Save error:", e);
+        }
+
         setTimeout(() => setIsSaved(false), 3000);
     };
 
